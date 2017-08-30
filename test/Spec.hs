@@ -1,3 +1,4 @@
+import           Data.Maybe
 import           Marc
 import           System.IO
 import           Test.Hspec
@@ -16,11 +17,20 @@ parseMaybe parser input =
         []              -> Nothing
         ((result, _):_) -> Just result
 
+withFileSpec :: FilePath -> (String -> IO r) -> IO r
+withFileSpec filename spec =
+  withFile filename ReadMode $ \fd -> do
+    contents <- hGetContents fd
+    spec contents
+
 main :: IO ()
 main = hspec $ do
   describe "MARC parser should" $ do
-    it "parse valid input 1b" $ do
-      withFile "data/marc1b.mrc" ReadMode $ \fd -> do
-        contents <- hGetContents fd
-        parseMarc contents `shouldBe` Just expectedMarc1b
 
+    it "parse valid input 1a" $ do
+      withFileSpec "data/marc1a.mrc" $ \s ->
+        isJust (parseMarc s) `shouldBe` True
+
+    it "parse valid input 1b" $ do
+      withFileSpec "data/marc1b.mrc" $ \s ->
+        parseMarc s `shouldBe` Just expectedMarc1b
