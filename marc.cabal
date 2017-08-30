@@ -1,4 +1,4 @@
-name:                parsers
+name:                marc
 version:             0.1.0.0
 -- synopsis:
 -- description:
@@ -15,25 +15,26 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib, Marc
+  exposed-modules:     Marc
+                     , Marc.Char
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
 
-executable parsers-exe
+executable marc-exe
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
-                     , parsers
+                     , marc
   default-language:    Haskell2010
 
-test-suite parsers-test
+test-suite marc-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
   build-depends:       base
                      , hspec
-                     , parsers
+                     , marc
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   default-language:    Haskell2010
 

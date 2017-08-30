@@ -1,8 +1,8 @@
 module Marc where
 
 import           Control.Applicative
-import           Data.Char                    (isAsciiLower, isAsciiUpper,
-                                               isDigit, isNumber, ord)
+import           Data.Char                    (isAsciiLower, isDigit)
+import           Marc.Char
 import           Text.ParserCombinators.ReadP
 
 data Encoding = MARC8 | UTF8 deriving (Eq, Show)
@@ -85,42 +85,6 @@ digit = satisfy isDigit
 
 numbers :: Int -> ReadP Int
 numbers n = read <$> count n digit
-
-isAsciiGraphicSymbol :: Char -> Bool
-isAsciiGraphicSymbol c =
-     o `elem` [0x21..0x2F]
-  || o `elem` [0x3A..0x40]
-  || o `elem` [0x5B..0x60]
-  || o `elem` [0x7B..0x7E]
-  where
-    o = ord c
-
-isAsciiGraphics :: Char -> Bool
-isAsciiGraphics c = ord c `elem` [0x20..0X7E]
-
-isAsciiSpace :: Char -> Bool
-isAsciiSpace = (== ' ')
-
-isAsciiDelete :: Char -> Bool
-isAsciiDelete = (== 0x7F) . ord
-
-isFill :: Char -> Bool
-isFill = (== '|')
-
-isFieldTerminator :: Char -> Bool
-isFieldTerminator = (== 0x1E) . ord
-
-isDataElementId :: Char -> Bool
-isDataElementId c = (isAsciiLower c || isNumber c || isAsciiGraphicSymbol c) && not (isAsciiSpace c)
-
-isAsciiUnitSeparator :: Char -> Bool
-isAsciiUnitSeparator = (== 0x1F) . ord
-
-isAsciiGroupSeparator :: Char -> Bool
-isAsciiGroupSeparator = (== 0x1D) . ord
-
--- isAsciiRecordSeparator :: Char -> Bool
--- isAsciiRecordSeparator = (== 0x30) . ord
 
 parseAsciiGraphic :: ReadP Char
 parseAsciiGraphic = satisfy isAsciiGraphics
