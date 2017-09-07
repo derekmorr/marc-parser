@@ -25,14 +25,14 @@ isFill :: Char -> Bool
 isFill = (== '|')
 
 isFieldTerminator :: Char -> Bool
-isFieldTerminator = (== 0x1E) . ord
+isFieldTerminator = (== '\RS')
 
 isDataElementId :: Char -> Bool
 isDataElementId c = (isAsciiLower c || isNumber c || isAsciiGraphicSymbol c) && not (isAsciiSpace c)
 
 isAsciiUnitSeparator :: Char -> Bool
-isAsciiUnitSeparator = (== 0x1F) . ord
+isAsciiUnitSeparator = (== '\US')
 
 isAsciiGroupSeparator :: Char -> Bool
-isAsciiGroupSeparator = (== 0x1D) . ord
+isAsciiGroupSeparator = (== '\GS')
 
