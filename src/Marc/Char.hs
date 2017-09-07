@@ -1,6 +1,6 @@
 module Marc.Char where
 
-import           Data.Char (isAsciiLower, isAsciiUpper, isNumber, ord)
+import           Data.Char (isAsciiLower, isNumber, ord)
 
 
 isAsciiGraphicSymbol :: Char -> Bool
