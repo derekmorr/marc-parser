@@ -19,7 +19,7 @@ isAsciiSpace :: Char -> Bool
 isAsciiSpace = (== ' ')
 
 isAsciiDelete :: Char -> Bool
-isAsciiDelete = (== 0x7F) . ord
+isAsciiDelete = (== '\DEL')
 
 isFill :: Char -> Bool
 isFill = (== '|')
