@@ -2,7 +2,8 @@ import           Data.Maybe
 import           Marc
 import           System.IO
 import           Test.Hspec
-import           Text.ParserCombinators.ReadP
+import           Text.Parsec
+import           Text.Parsec.String
 
 expectedMarc1b :: Marc21Record
 expectedMarc1b = Marc21Record
@@ -22,11 +23,11 @@ expectedMarc1Leader = Leader
 parseMarc :: String -> Maybe Marc21Record
 parseMarc = parseMaybe parseMarc21Record
 
-parseMaybe :: ReadP a -> String -> Maybe a
+parseMaybe :: Parser a -> String -> Maybe a
 parseMaybe parser input =
-    case readP_to_S parser input of
-        []              -> Nothing
-        ((result, _):_) -> Just result
+    case runParser parser () "test data" input of
+        Left _       -> Nothing
+        Right result -> Just result
 
 withFileSpec :: FilePath -> (String -> IO r) -> IO r
 withFileSpec filename spec =
@@ -45,3 +46,11 @@ main = hspec $ do
     it "parse valid input 1b" $ do
       withFileSpec "data/marc1b.mrc" $ \s ->
         parseMarc s `shouldBe` Just expectedMarc1b
+
+    it "parse the correct number of records from a multi-record file" $ do
+      withFileSpec "data/test_10.mrc" $ \s ->
+        length <$> (parseMaybe p6 s) `shouldBe` Just 10
+
+    it "parse the correct number of records from a single record file" $ do
+      withFileSpec "data/marc1a.mrc" $ \s ->
+        length <$> (parseMaybe p6 s) `shouldBe` Just 1

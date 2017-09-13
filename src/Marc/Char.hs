@@ -35,4 +35,3 @@ isAsciiUnitSeparator = (== '\US')
 
 isAsciiGroupSeparator :: Char -> Bool
 isAsciiGroupSeparator = (== '\GS')
-
