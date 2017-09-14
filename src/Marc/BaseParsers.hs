@@ -8,19 +8,9 @@ import           Text.Parsec
 import           Text.Parsec.Prim
 import           Text.Parsec.String
 
--- oneOf :: String -> ReadP Char
--- oneOf str = satisfy $ flip elem str
-
--- noneOf :: String -> ReadP Char
--- noneOf str = satisfy $ flip notElem str
-
--- digit :: ReadP Char
--- digit = satisfy isDigit
-
 numbers :: Int -> Parser Int
 numbers n = read <$> count n digit
 
--- asciiGraphic :: ReadP Char
 asciiGraphic :: Parser Char
 asciiGraphic = satisfy isAsciiGraphics
 
@@ -28,34 +18,30 @@ asciiGraphicSymbol :: Parser Char
 asciiGraphicSymbol = satisfy isAsciiGraphicSymbol
 
 asciiSpace :: Parser Char
-asciiSpace = char ' ' --satisfy isAsciiSpace
+asciiSpace = char ' '
 
--- identifier :: ReadP Char
 identifier :: Parser Char
-identifier = lower -- satisfy isAsciiLower
-         <|> digit -- satisfy isDigit
+identifier = lower
+         <|> digit
          <|> asciiGraphicSymbol
 
-
--- validIndicator :: ReadP Char
 validIndicator :: Parser Char
-validIndicator = lower -- satisfy isAsciiLower
+validIndicator = lower
              <|> digit
              <|> asciiSpace
 
 indicator :: Parser (Maybe Char)
 indicator = do
   c <- validIndicator
-  return $ f c
-  where
-    f ' ' = Nothing
-    f x   = Just x
+  case c of
+    ' ' -> return Nothing
+    x   -> return (Just x)
 
 delimiter :: Parser Char
-delimiter = char '\US' --satisfy isAsciiUnitSeparator
+delimiter = char '\US'
 
 fieldTerminator :: Parser Char
-fieldTerminator = char '\RS' --satisfy isFieldTerminator
+fieldTerminator = char '\RS'
 
 recordTerminator :: Parser Char
-recordTerminator = char '\GS' -- satisfy isAsciiGroupSeparator
+recordTerminator = char '\GS'

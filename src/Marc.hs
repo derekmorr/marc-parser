@@ -80,7 +80,7 @@ data Marc21Record = Marc21Record
   { leader        :: Leader
   , dirEntries    :: [DirEntry]
   , controlFields :: [ControlField]
-  -- , varFields     :: [VariableDataField]
+  , varFields     :: [VariableDataField]
   } deriving (Eq, Show)
 
 parseEncoding :: Parser Encoding
@@ -170,11 +170,12 @@ parseMarc21Record = do
   -- vfields <- p5
   -- body    <- endBy (satisfy isAsciiGroupSeparator)
   -- elems   <-
-  -- vfields <- sepBy parseVariableField parseFieldTerminator --many1 parseVariableField
-  -- _       <- recordTerminator
+  -- vfields <- sepBy parseVariableField fieldTerminator --many1 parseVariableField
+  vfields <- endBy parseVariableField fieldTerminator
+  _       <- recordTerminator
     -- let cfields = parseControlField <$> getControlFields dirs
     -- f <- cfields
-  return $ Marc21Record lead dirs cfields -- vfields
+  return $ Marc21Record lead dirs cfields vfields
 
 getCF :: [DirEntry] -> Parser [ControlField]
 getCF dirents = sequence $ parseControlField <$> getControlFields dirents
@@ -196,7 +197,7 @@ parseControlField dirEnt = do
 parseDataElement :: Parser DataElement
 parseDataElement = do
   i           <- identifier
-  dataElement <- many1 $ noneOf "\US" -- satisfy $ not . isAsciiUnitSeparator
+  dataElement <- many1 $ noneOf "\US\RS\GS"
   return $ DataElement i dataElement
 
 parseVariableField :: Parser VariableDataField
@@ -204,39 +205,39 @@ parseVariableField = do
   i1    <- indicator
   i2    <- indicator
   _     <- delimiter
-  elems <- sepBy1 parseDataElement delimiter --many1 parseDataElement
-  _     <- fieldTerminator
+  elems <- sepBy1 parseDataElement delimiter
+  -- _     <- fieldTerminator
   return $ VariableDataField i1 i2 elems
 
 
-p4 :: Parser [String]
-p4 = do
-  str <- sepBy1 (many1 $ noneOf "\GS") recordTerminator
-  _   <- recordTerminator
-  return str
+-- p4 :: Parser [String]
+-- p4 = do
+--   str <- sepBy1 (many1 $ noneOf "\GS") recordTerminator
+--   _   <- recordTerminator
+--   return str
 
-p5 :: Parser [VariableDataField]
-p5 = do
-  elems <- sepBy1 parseVariableField recordTerminator
-  -- _     <- recordTerminator
-  return elems
+-- p5 :: Parser [VariableDataField]
+-- p5 = do
+--   elems <- sepBy1 parseVariableField recordTerminator
+--   -- _     <- recordTerminator
+--   return elems
 
 p6 :: Parser [String]
 p6 = endBy marcrec recordTerminator
   where
     marcrec = many1 $ noneOf "\GS"
 
-ft :: Parser Char
-ft = char '\RS'
+-- ft :: Parser Char
+-- ft = char '\RS'
 
-rt :: Parser Char
-rt = char '\GS'
+-- rt :: Parser Char
+-- rt = char '\GS'
 
-marcFile :: Parser [[String]]
-marcFile = endBy marc rt
+-- marcFile :: Parser [[String]]
+-- marcFile = endBy marc rt
 
-marc :: Parser [String]
-marc = sepBy cell delimiter
+-- marc :: Parser [String]
+-- marc = sepBy cell delimiter
 
-cell :: Parser String
-cell = many (noneOf "\GS\RS")
+-- cell :: Parser String
+-- cell = many (noneOf "\GS\RS")
