@@ -157,8 +157,7 @@ parseDirEntry = do
 parseMarc21Record :: Parser Marc21Record
 parseMarc21Record = do
   lead    <- parseLeader
-  dirs    <- many1 parseDirEntry
-  _       <- fieldTerminator
+  dirs    <- manyTill parseDirEntry fieldTerminator
   cfields <- getCF dirs
   vfields <- endBy parseVariableField fieldTerminator
   return $ Marc21Record lead dirs cfields vfields
@@ -179,8 +178,7 @@ testFunc filepath = do
 
 parseControlField :: DirEntry -> Parser ControlField
 parseControlField dirEnt = do
-  content <- many1 $ noneOf "\RS"
-  _       <- fieldTerminator
+  content <- manyTill (noneOf "\RS") fieldTerminator
   return $ ControlField (tag dirEnt) content
 
 parseDataElement :: Parser DataElement
