@@ -123,11 +123,11 @@ main = hspec $ do
 
     it "parse the correct number of records from a multi-record file" $ do
       withFileSpec "data/test_10.mrc" $ \s ->
-        length <$> (parseMaybe p6 s) `shouldBe` Just 10
+        length <$> (parseMaybe parseMarc21Records s) `shouldBe` Just 10
 
     it "parse the correct number of records from a single record file" $ do
       withFileSpec "data/marc1a.mrc" $ \s ->
-        length <$> (parseMaybe p6 s) `shouldBe` Just 1
+        length <$> (parseMaybe parseMarc21Records s) `shouldBe` Just 1
 
     it "parses a variable field" $ do
       let s = "  \USbGAO (202)512-6000 (voice); (202)512-6061 (Fax); (202)512-2537 (TDD)\USfpaper copy"

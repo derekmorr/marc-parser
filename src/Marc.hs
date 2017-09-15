@@ -1,6 +1,5 @@
 module Marc where
 
--- import           Control.Applicative
 import           Data.Char          (isAsciiLower, isDigit)
 import           Marc.BaseParsers
 import           Marc.Char
@@ -155,27 +154,17 @@ parseDirEntry = do
   s <- numbers 5
   return $ DirEntry t l s
 
--- body :: Parser [VariableDataField]
--- body = endBy vfields (satisfy isAsciiGroupSeparator)
-
--- vfields :: Parser [VariableDataField]
--- vfields = sepBy parseVariableField parseFieldTerminator
-
 parseMarc21Record :: Parser Marc21Record
 parseMarc21Record = do
   lead    <- parseLeader
   dirs    <- many1 parseDirEntry
   _       <- fieldTerminator
   cfields <- getCF dirs
-  -- vfields <- p5
-  -- body    <- endBy (satisfy isAsciiGroupSeparator)
-  -- elems   <-
-  -- vfields <- sepBy parseVariableField fieldTerminator --many1 parseVariableField
   vfields <- endBy parseVariableField fieldTerminator
-  _       <- recordTerminator
-    -- let cfields = parseControlField <$> getControlFields dirs
-    -- f <- cfields
   return $ Marc21Record lead dirs cfields vfields
+
+parseMarc21Records :: Parser [Marc21Record]
+parseMarc21Records = endBy parseMarc21Record recordTerminator
 
 getCF :: [DirEntry] -> Parser [ControlField]
 getCF dirents = sequence $ parseControlField <$> getControlFields dirents
@@ -206,38 +195,4 @@ parseVariableField = do
   i2    <- indicator
   _     <- delimiter
   elems <- sepBy1 parseDataElement delimiter
-  -- _     <- fieldTerminator
   return $ VariableDataField i1 i2 elems
-
-
--- p4 :: Parser [String]
--- p4 = do
---   str <- sepBy1 (many1 $ noneOf "\GS") recordTerminator
---   _   <- recordTerminator
---   return str
-
--- p5 :: Parser [VariableDataField]
--- p5 = do
---   elems <- sepBy1 parseVariableField recordTerminator
---   -- _     <- recordTerminator
---   return elems
-
-p6 :: Parser [String]
-p6 = endBy marcrec recordTerminator
-  where
-    marcrec = many1 $ noneOf "\GS"
-
--- ft :: Parser Char
--- ft = char '\RS'
-
--- rt :: Parser Char
--- rt = char '\GS'
-
--- marcFile :: Parser [[String]]
--- marcFile = endBy marc rt
-
--- marc :: Parser [String]
--- marc = sepBy cell delimiter
-
--- cell :: Parser String
--- cell = many (noneOf "\GS\RS")

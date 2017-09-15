@@ -1,11 +1,7 @@
 module Marc.BaseParsers where
 
--- import           Control.Applicative
-import           Data.Char
 import           Marc.Char
--- import           Text.ParserCombinators.ReadP
 import           Text.Parsec
-import           Text.Parsec.Prim
 import           Text.Parsec.String
 
 numbers :: Int -> Parser Int
@@ -21,18 +17,11 @@ asciiSpace :: Parser Char
 asciiSpace = char ' '
 
 identifier :: Parser Char
-identifier = lower
-         <|> digit
-         <|> asciiGraphicSymbol
-
-validIndicator :: Parser Char
-validIndicator = lower
-             <|> digit
-             <|> asciiSpace
+identifier = lower  <|> digit <|> asciiGraphicSymbol
 
 indicator :: Parser (Maybe Char)
 indicator = do
-  c <- validIndicator
+  c <- lower <|> digit <|> asciiSpace
   case c of
     ' ' -> return Nothing
     x   -> return (Just x)
