@@ -2,7 +2,6 @@ module Marc.Char where
 
 import           Data.Char (isAsciiLower, isNumber, ord)
 
-
 isAsciiGraphicSymbol :: Char -> Bool
 isAsciiGraphicSymbol c =
      o `elem` [0x21..0x2F]
@@ -15,23 +14,6 @@ isAsciiGraphicSymbol c =
 isAsciiGraphics :: Char -> Bool
 isAsciiGraphics c = ord c `elem` [0x20..0X7E]
 
-isAsciiSpace :: Char -> Bool
-isAsciiSpace = (== ' ')
-
-isAsciiDelete :: Char -> Bool
-isAsciiDelete = (== '\DEL')
-
-isFill :: Char -> Bool
-isFill = (== '|')
-
 isFieldTerminator :: Char -> Bool
 isFieldTerminator = (== '\RS')
 
-isDataElementId :: Char -> Bool
-isDataElementId c = (isAsciiLower c || isNumber c || isAsciiGraphicSymbol c) && not (isAsciiSpace c)
-
-isAsciiUnitSeparator :: Char -> Bool
-isAsciiUnitSeparator = (== '\US')
-
-isAsciiGroupSeparator :: Char -> Bool
-isAsciiGroupSeparator = (== '\GS')
