@@ -135,7 +135,7 @@ parseLeader = do
   l  <- numbers 5
   s  <- parseStatus
   t  <- parseType
-  i1 <- count 2 anyChar
+  i1 <- count 2 asciiGraphic
   e  <- parseEncoding
   _  <- char '2'
   _  <- char '2'
