@@ -110,33 +110,33 @@ expectedVarField1 = VariableDataField
 
 
 main :: IO ()
-main = hspec $ do
+main = hspec $
   describe "MARC parser should" $ do
 
-    it "parse valid input 1a - leader" $ do
-      withFileSpec "data/marc1a.mrc" $ \s ->
-        leader <$> parseMarc s `shouldBe` Just expectedMarc1Leader
+  it "parse valid input 1a - leader" $
+    withFileSpec "data/marc1a.mrc" $ \s ->
+    leader <$> parseMarc s `shouldBe` Just expectedMarc1Leader
 
-    it "parse valid input 1b" $ do
-      withFileSpec "data/marc1b.mrc" $ \s ->
-        parseMarc s `shouldBe` Just expectedMarc1b
+  it "parse valid input 1b" $
+    withFileSpec "data/marc1b.mrc" $ \s ->
+    parseMarc s `shouldBe` Just expectedMarc1b
 
-    it "parse the correct number of records from a multi-record file" $ do
-      withFileSpec "data/test_10.mrc" $ \s ->
-        length <$> (parseMaybe parseMarc21Records s) `shouldBe` Just 10
+  it "parse the correct number of records from a multi-record file" $
+    withFileSpec "data/test_10.mrc" $ \s ->
+    length <$> parseMaybe parseMarc21Records s `shouldBe` Just 10
 
-    it "parse the correct number of records from a single record file" $ do
-      withFileSpec "data/marc1a.mrc" $ \s ->
-        length <$> (parseMaybe parseMarc21Records s) `shouldBe` Just 1
+  it "parse the correct number of records from a single record file" $
+    withFileSpec "data/marc1a.mrc" $ \s ->
+    length <$> parseMaybe parseMarc21Records s `shouldBe` Just 1
 
-    it "parses a variable field" $ do
-      let s = "  \USbGAO (202)512-6000 (voice); (202)512-6061 (Fax); (202)512-2537 (TDD)\USfpaper copy"
-      runParser parseVariableField () "test data" s `shouldBe` Right expectedVarField1
+  it "parses a variable field" $ do
+    let s = "  \USbGAO (202)512-6000 (voice); (202)512-6061 (Fax); (202)512-2537 (TDD)\USfpaper copy"
+    runParser parseVariableField () "test data" s `shouldBe` Right expectedVarField1
 
-    it "extract the correct number of varfields from the varfields portion of a record" $ do
-      let p = endBy parseVariableField fieldTerminator
-      let  expectedCount = length $ filter isFieldTerminator varFieldsStr
-      length <$> runParser p () "test data" varFieldsStr `shouldBe` Right expectedCount
+  it "extract the correct number of varfields from the varfields portion of a record" $ do
+    let p = endBy parseVariableField fieldTerminator
+    let expectedCount = length $ filter isFieldTerminator varFieldsStr
+    length <$> runParser p () "test data" varFieldsStr `shouldBe` Right expectedCount
 
     -- it "the number of extracted fields should match the number of directory entries"
 
